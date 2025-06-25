@@ -11,4 +11,4 @@ markdown# Search Algorithm Notes
 ## Adversarial Search
 - Minimax: For two-player games
 - Alpha-Beta Pruning: Optimization for minimax
-- Depth-limited minimax: reducing the number of calculated moves
+- Depth-Limited minimax: reducing the number of calculated moves
