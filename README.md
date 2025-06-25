@@ -8,7 +8,7 @@ A comprehensive artificial intelligence course with Python implementations.
 Finding solutions to problems
 - Uninformed search (DFS, BFS)
 - Informed search (A*)
-- Adversarial search (Minimax, Alpha-Beta)
+- Adversarial search (Minimax, Alpha-Beta, Depth-Limited)
 
 ### 2. [Knowledge](./knowledge/)
 Representing information and reasoning
