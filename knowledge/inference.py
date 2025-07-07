@@ -12,7 +12,7 @@ class Inference:
             for i in range(len(propositions)):
                 model[propositions[i]] = combination[i]
 
-                
+                j
 
 
 
