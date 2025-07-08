@@ -1,3 +1,9 @@
+"""
+Model Checking Module for Propositional Logic
+
+This module implements model checking algorithm for propositional logic inference.
+"""
+
 import itertools
 from Propositional_Logic import LogicNot, LogicAnd, LogicOr, LogicImplies, LogicBiconditional, LogicXor
 
@@ -19,29 +25,63 @@ class Inference:
         self.q = q  # Store second proposition name
         self.r = r  # Store third proposition name
 
-    def model_check(self, kb, query, model, propositions):
+    class ModelCheck:
         """
-        Perform model checking to determine if knowledge base entails query.
-
-        :param kb: knowledge base statements
-        :param query: query to check
-        :param model: model dictionary (will be built during execution)
-        :param propositions: list of proposition names
+        Inner class that performs model checking to determine if knowledge base entails query.
+        This class handles the core model checking algorithm.
         """
-        valid_models = []  # Store models that satisfy KB
 
-        # Generate all possible truth value combinations
-        for combination in itertools.product([True, False], repeat=len(propositions)):
-            model = {}  # Create empty model for this combination
+        def __init__(self, kb, query, model, propositions):
+            """
+            Initialize the model checking process.
 
-            # Build the model by assigning truth values to propositions
-            for i in range(len(propositions)):
-                model[propositions[i]] = combination[i]  # Assign truth value to proposition
+            :param kb: knowledge base statements
+            :param query: query statement
+            :param model: model dictionary (will be built during execution)
+            :param propositions: list of proposition names
+            """
+            self.kb = kb  # Store knowledge base statements
+            self.query = query  # Store query statement
+            self.model = model  # Store model dictionary
+            self.propositions = propositions  # Store list of propositions
 
-            print(f"Checking model: {model}")
 
+        def model_mapping(self):
+            """
+            Generate all possible models and check which ones satisfy the knowledge base.
+
+            :return: list of valid models that satisfy KB
+            """
+            valid_models = []  # Store models that satisfy KB
+
+            # Generate all possible truth value combinations
+            for combination in itertools.product([True, False], repeat=len(self.propositions)):
+                model = {}  # Create empty model for this combination
+
+                # Build the model by assigning truth values to propositions
+                for i in range(len(self.propositions)):
+                    model[self.propositions[i]] = combination[i]  # Assign truth value to proposition
+
+                print(f"Checking model: {model}")
+
+                # Check if this model satisfies the knowledge base
+                if self.check_model_validity(model):
+                    print(f"✅ KB satisfied - keeping model")
+                    valid_models.append(model.copy())  # Store copy of valid model
+                else:
+                    print(f"❌ KB fails - discarding model")
+
+            return valid_models  # Return all models that satisfy the knowledge base
+
+        def check_model_validity(self, model):
+            """
+            Check if a model satisfies all statements in the knowledge base.
+
+            :param model: model to check
+            :return: True if model satisfies KB, False otherwise
+            """
             # Check if all KB statements are satisfied in this model
-            for statement in kb:
+            for statement in self.kb:
                 operation = statement[0]  # Get the logical operation type
 
                 # Dictionary mapping operation names to classes
@@ -55,35 +95,82 @@ class Inference:
                 }
 
                 if operation in logic_operations:
-                    LogicClass = logic_operations[operation]  # Get the appropriate class
+                    logic_class = logic_operations[operation]  # Get the appropriate class
 
                     if operation == "not":
                         # NOT operation needs one parameter
                         p_value = model[statement[1]]  # Get proposition value from model
-                        logic_op = LogicClass(p_value)  # Create logic operation object
+                        logic_op = logic_class(p_value)  # Create logic operation object
                     else:
                         # Binary operations need two parameters
                         p_value = model[statement[1]]  # Get first proposition value
                         q_value = model[statement[2]]  # Get second proposition value
-                        logic_op = LogicClass(p_value, q_value)  # Create logic operation object
+                        logic_op = logic_class(p_value, q_value)  # Create logic operation object
 
                     # Check if this statement is false in the current model
                     if not logic_op.evaluate():
-                        print(f"❌ KB fails - discarding model")
-                        break  # Exit KB checking loop, move to next model
-            else:
-                # If we completed the KB loop without breaking, all statements were true
-                print(f"✅ KB satisfied - keeping model")
-                valid_models.append(model.copy())  # Store copy of valid model
+                        return False  # If any statement fails, model doesn't satisfy KB
 
-        return valid_models  # Return all models that satisfy the knowledge base
+            return True  # All statements passed, model satisfies KB
+
+        def check_query_validity(self, model):
+            """
+            Check if a query statement is satisfied in a model.
+
+            :param model: model to check
+            :return: True if query is satisfied, False otherwise
+            """
+            # Check if query statement is satisfied in this model
+            operation = self.query[0]  # Get the logical operation type
+
+            # Dictionary mapping operation names to classes
+            logic_operations = {
+                "not": LogicNot,
+                "and": LogicAnd,
+                "or": LogicOr,
+                "implies": LogicImplies,
+                "biconditional": LogicBiconditional,
+                "xor": LogicXor
+            }
+
+            if operation in logic_operations:
+                logic_class = logic_operations[operation]  # Get the appropriate class
+
+                if operation == "not":
+                    # NOT operation needs one parameter
+                    p_value = model[self.query[1]]  # Get proposition value from model
+                    logic_op = logic_class(p_value)  # Create logic operation object
+                else:
+                    # Binary operations need two parameters
+                    p_value = model[self.query[1]]  # Get first proposition value
+                    q_value = model[self.query[2]]  # Get second proposition value
+                    logic_op = logic_class(p_value, q_value)  # Create logic operation object
+
+                return logic_op.evaluate()  # Directly return the result
+
+            else:
+                return False  # Treat unknown operations as false
 
 
 def main():
     """
     Example usage of the model checking algorithm.
     """
-    pass
+    # Example: Create inference engine
+    inference = Inference("p", "q", "r")
+
+    # Example: Create model checker
+    kb = [("implies", "p", "q"), ("not", "p")]
+    query = ("or", "p", "q")
+    propositions = ["p", "q"]
+
+    model_checker = inference.ModelCheck(kb, query, {}, propositions)
+    valid_models = model_checker.model_mapping()
+
+    print(f"Found {len(valid_models)} valid models")
+
+    query_result = model_checker.check_query_validity(valid_models[0])
+    print(f"Query result: {query_result}")
 
 
 if __name__ == "__main__":
