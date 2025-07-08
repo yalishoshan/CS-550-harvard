@@ -1,9 +1,3 @@
-"""
-Model Checking Module for Propositional Logic
-
-This module implements model checking algorithm for propositional logic inference.
-"""
-
 import itertools
 from Propositional_Logic import LogicNot, LogicAnd, LogicOr, LogicImplies, LogicBiconditional, LogicXor
 
