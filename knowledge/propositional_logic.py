@@ -1,42 +1,7 @@
-class PropositionalLogic:
-    """
-    Base class for all propositional logic operations.
-    This class defines the common interface that all logical operations must implement.
-    """
-
-    def __init__(self):
-        """
-        Initialize the base propositional logic operation.
-        This is a base class and should not be instantiated directly.
-        """
-        pass
-
-    def evaluate(self):
-        """
-        Evaluate the logical operation and return the result.
-        This method must be implemented by all subclasses.
-
-        :return: result of the logical operation
-        :rtype: bool
-        :raises NotImplementedError: if not implemented by subclass
-        """
-        raise NotImplementedError("Subclasses must implement the evaluate method")
-
-    def __str__(self):
-        """
-        Return string representation of the logical operation.
-
-        :return: string representation of the operation
-        :rtype: str
-        """
-        return f"{self.__class__.__name__} operation"
-
-
-class LogicNot(PropositionalLogic):
+class LogicNot:
     """
     This class implements the logical NOT operation (negation).
     Represents the negation operator (¬) in propositional logic.
-    Inherits from PropositionalLogic base class.
     """
 
     def __init__(self, operand):
@@ -58,11 +23,10 @@ class LogicNot(PropositionalLogic):
         return not self.operand  # Return logical NOT of the operand
 
 
-class LogicAnd(PropositionalLogic):
+class LogicAnd:
     """
     This class implements the logical AND operation (conjunction).
     Represents the conjunction operator (∧) in propositional logic.
-    Inherits from PropositionalLogic base class.
     """
 
     def __init__(self, left_operand, right_operand):
@@ -87,14 +51,13 @@ class LogicAnd(PropositionalLogic):
         return self.left_operand and self.right_operand  # Return logical AND
 
 
-class LogicOr(PropositionalLogic):
+class LogicOr:
     """
     This class implements the logical OR operation (disjunction).
     Represents the disjunction operator (∨) in propositional logic.
-    Inherits from PropositionalLogic base class.
     """
 
-    def __init__(self, left_operand, right_operand):
+    def __init__(self, left_operand, right_operand, third_operand=None):
         """
         Initialize the OR operation with two propositions.
 
@@ -102,25 +65,29 @@ class LogicOr(PropositionalLogic):
         :type left_operand: bool
         :param right_operand: second propositional formula value
         :type right_operand: bool
+        :param third_operand: optional third propositional formula value
+        :type third_operand: bool or None
         """
         self.left_operand = left_operand  # Store first proposition
         self.right_operand = right_operand  # Store second proposition
+        self.third_operand = third_operand  # Store optional third proposition
 
     def evaluate(self):
         """
-        Returns the disjunction of two propositional formulas.
+        Returns the disjunction of propositional formulas.
 
-        :return: disjunction of left_operand or right_operand (left ∨ right)
+        :return: disjunction of operands (left ∨ right ∨ third)
         :rtype: bool
         """
-        return self.left_operand or self.right_operand  # Return logical OR
+        if self.third_operand is not None:
+            return self.left_operand or self.right_operand or self.third_operand  # Return logical OR with three operands
+        return self.left_operand or self.right_operand  # Return logical OR with two operands
 
 
-class LogicImplies(PropositionalLogic):
+class LogicImplies:
     """
     This class implements the logical IMPLIES operation (implication).
     Represents the implication operator (→) in propositional logic.
-    Inherits from PropositionalLogic base class.
     """
 
     def __init__(self, antecedent, consequent):
@@ -146,11 +113,10 @@ class LogicImplies(PropositionalLogic):
         return not self.antecedent or self.consequent  # p → q is equivalent to ¬p ∨ q
 
 
-class LogicBiconditional(PropositionalLogic):
+class LogicBiconditional:
     """
     This class implements the logical BICONDITIONAL operation (if and only if).
     Represents the biconditional operator (↔) in propositional logic.
-    Inherits from PropositionalLogic base class.
     """
 
     def __init__(self, left_operand, right_operand):
@@ -176,11 +142,10 @@ class LogicBiconditional(PropositionalLogic):
         return self.left_operand == self.right_operand  # True when both have same truth value
 
 
-class LogicXor(PropositionalLogic):
+class LogicXor:
     """
     This class implements the logical XOR operation (exclusive or).
     Represents the exclusive or operator (⊕) in propositional logic.
-    Inherits from PropositionalLogic base class.
     """
 
     def __init__(self, left_operand, right_operand):
@@ -203,7 +168,25 @@ class LogicXor(PropositionalLogic):
         :return: exclusive or of left_operand ⊕ right_operand
         :rtype: bool
         """
-        return (self.left_operand or self.right_operand) and not (self.left_operand and self.right_operand)
+        return (self.left_operand or self.right_operand) and not (self.left_operand and self.right_operand)  # XOR logic
+
+
+# Dictionary for easy access to logic operations
+logic_operations = {
+    "¬": LogicNot,
+    "not": LogicNot,
+    "∧": LogicAnd,
+    "and": LogicAnd,
+    "∨": LogicOr,
+    "v": LogicOr,  # Your requested v symbol
+    "or": LogicOr,
+    "→": LogicImplies,
+    "implies": LogicImplies,
+    "↔": LogicBiconditional,
+    "iff": LogicBiconditional,
+    "⊕": LogicXor,
+    "xor": LogicXor
+}
 
 
 def main():
@@ -235,6 +218,18 @@ def main():
     # Test XOR operation
     xor_op = LogicXor(True, False)
     print(f"True ⊕ False = {xor_op.evaluate()}")  # True
+
+    # Demo using the dictionary
+    print("\n=== Using Logic Operations Dictionary ===")
+    v = logic_operations["v"]  # Get OR operation
+    and_op = logic_operations["∧"]  # Get AND operation
+
+    # Create some logical formulas
+    formula1 = v(True, False)  # True v False
+    formula2 = and_op(True, False)  # True ∧ False
+
+    print(f"True v False = {formula1.evaluate()}")  # True
+    print(f"True ∧ False = {formula2.evaluate()}")  # False
 
 
 if __name__ == "__main__":
