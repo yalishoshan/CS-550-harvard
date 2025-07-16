@@ -1,14 +1,14 @@
-from propositional_logic import LogicNot, LogicAnd, LogicOr, LogicImplies, LogicBiconditional, LogicXor
+from propositional_logic import Not, And, Or
 from search.projects.degrees import people
 from functools import reduce
 
+
+
+
 logic_operations = {
-    "¬": LogicNot,
-    "∧": LogicAnd,
-    "∨": LogicOr,
-    "→": LogicImplies,
-    "↔": LogicBiconditional,
-    "⊕": LogicXor
+    "¬": Not,
+    "∧": And,
+    "∨": Or
 }
 
 
@@ -36,9 +36,9 @@ class KnowledgeEngineering:
         """
         This function
         """
-        or1 = LogicOr(people[0], people[1], people[2])
-        or2 = LogicOr(rooms[0], rooms[1], rooms[2])
-        or3 =LogicOr(weapons[0], weapons[1], weapons[2])
+        or1 = Or(people[0], people[1], people[2])
+        or2 = Or(rooms[0], rooms[1], rooms[2])
+        or3 = Or(weapons[0], weapons[1], weapons[2])
 
 
     def card_in_my_hand(self, card):
