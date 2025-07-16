@@ -1,4 +1,4 @@
-class LogicNot:
+class Not:
     """
     This class implements the logical NOT operation (negation).
     Represents the negation operator (¬) in propositional logic.
@@ -23,7 +23,7 @@ class LogicNot:
         return not self.operand  # Return logical NOT of the operand
 
 
-class LogicAnd:
+class And:
     """
     This class implements the logical AND operation (conjunction).
     Represents the conjunction operator (∧) in propositional logic.
@@ -51,7 +51,7 @@ class LogicAnd:
         return self.left_operand and self.right_operand  # Return logical AND
 
 
-class LogicOr:
+class Or:
     """
     This class implements the logical OR operation (disjunction).
     Represents the disjunction operator (∨) in propositional logic.
@@ -84,7 +84,7 @@ class LogicOr:
         return self.left_operand or self.right_operand  # Return logical OR with two operands
 
 
-class LogicImplies:
+class Implies:
     """
     This class implements the logical IMPLIES operation (implication).
     Represents the implication operator (→) in propositional logic.
@@ -113,7 +113,7 @@ class LogicImplies:
         return not self.antecedent or self.consequent  # p → q is equivalent to ¬p ∨ q
 
 
-class LogicBiconditional:
+class Biconditional:
     """
     This class implements the logical BICONDITIONAL operation (if and only if).
     Represents the biconditional operator (↔) in propositional logic.
@@ -142,7 +142,7 @@ class LogicBiconditional:
         return self.left_operand == self.right_operand  # True when both have same truth value
 
 
-class LogicXor:
+class Xor:
     """
     This class implements the logical XOR operation (exclusive or).
     Represents the exclusive or operator (⊕) in propositional logic.
@@ -173,19 +173,19 @@ class LogicXor:
 
 # Dictionary for easy access to logic operations
 logic_operations = {
-    "¬": LogicNot,
-    "not": LogicNot,
-    "∧": LogicAnd,
-    "and": LogicAnd,
-    "∨": LogicOr,
-    "v": LogicOr,  # Your requested v symbol
-    "or": LogicOr,
-    "→": LogicImplies,
-    "implies": LogicImplies,
-    "↔": LogicBiconditional,
-    "iff": LogicBiconditional,
-    "⊕": LogicXor,
-    "xor": LogicXor
+    "¬": Not,
+    "not": Not,
+    "∧": And,
+    "and": And,
+    "∨": Or,
+    "v": Or,  # Your requested v symbol
+    "or": Or,
+    "→": Implies,
+    "implies": Implies,
+    "↔": Biconditional,
+    "iff": Biconditional,
+    "⊕": Xor,
+    "xor": Xor
 }
 
 
@@ -196,27 +196,27 @@ def main():
     print("=== Propositional Logic Operations Demo ===")
 
     # Test NOT operation
-    not_op = LogicNot(True)
+    not_op = Not(True)
     print(f"NOT True = {not_op.evaluate()}")  # False
 
     # Test AND operation
-    and_op = LogicAnd(True, False)
+    and_op = And(True, False)
     print(f"True AND False = {and_op.evaluate()}")  # False
 
     # Test OR operation
-    or_op = LogicOr(True, False)
+    or_op = Or(True, False)
     print(f"True OR False = {or_op.evaluate()}")  # True
 
     # Test IMPLIES operation
-    implies_op = LogicImplies(True, False)
+    implies_op = Implies(True, False)
     print(f"True → False = {implies_op.evaluate()}")  # False
 
     # Test BICONDITIONAL operation
-    biconditional_op = LogicBiconditional(True, True)
+    biconditional_op = Biconditional(True, True)
     print(f"True ↔ True = {biconditional_op.evaluate()}")  # True
 
     # Test XOR operation
-    xor_op = LogicXor(True, False)
+    xor_op = Xor(True, False)
     print(f"True ⊕ False = {xor_op.evaluate()}")  # True
 
     # Demo using the dictionary
