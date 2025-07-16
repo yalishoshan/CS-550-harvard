@@ -71,16 +71,18 @@ class KnowledgeEngineering:
         ))
 
 
-    def initial_card(self, card):
+    def my_card(self, card, i):
         """
-        This function denies the card that is known
+        This function returns the card in my hand as not the solution cause it is known
 
-        :param card: card in my h
+        :param card: card in my hand
         :type card: tuple
+        :param i: index of the card in the tuple
+        :type i: int
         """
 
         # Initial cards
-        self.knowledge.add(And(Not(Symbol(card[0])), Not(Symbol(card[1])), Not(Symbol(card[2]))))
+        self.knowledge.add(Not(card[i]))
 
     def known_card(self, card):
         """
@@ -102,12 +104,20 @@ class KnowledgeEngineering:
         """
 
         # Unknown card
-        self.knowledge.add(Or(Not(Symbol(card[0]), Not(Symbol(card[1]), Not(Symbol(card[2]))))))
-
+        self.knowledge.add(Or(Not(Symbol(card[0])), Not(Symbol(card[1])), Not(Symbol(card[2]))))
 
 
 
     def check_guess(knowledge, symbols):
+        """"
+        This function checks the guess of the unknown card
+
+        :param knowledge: knowledge base
+        :type knowledge: set
+        :param symbols: list of symbols
+        :type symbols: list
+        """
+
         for symbol in symbols:
             if ModelCheck(knowledge, symbol):
                 return symbol
