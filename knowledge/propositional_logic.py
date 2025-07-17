@@ -9,7 +9,7 @@ class Not:
         Initialize the NOT operation with one proposition.
 
         :param operand: the proposition to negate
-        :type operand: bool
+        :type operand: bool or Symbol
         """
         self.operand = operand  # Store the proposition value to negate
 
@@ -34,9 +34,9 @@ class And:
         Initialize the AND operation with two propositions.
 
         :param left_operand: first propositional formula value
-        :type left_operand: bool
+        :type left_operand: bool or Symbol
         :param right_operand: second propositional formula value
-        :type right_operand: bool
+        :type right_operand: bool or Symbol
         """
         self.left_operand = left_operand  # Store first proposition
         self.right_operand = right_operand  # Store second proposition
@@ -62,11 +62,11 @@ class Or:
         Initialize the OR operation with two propositions.
 
         :param left_operand: first propositional formula value
-        :type left_operand: bool
+        :type left_operand: bool or Symbol
         :param right_operand: second propositional formula value
-        :type right_operand: bool
+        :type right_operand: bool or Symbol
         :param third_operand: optional third propositional formula value
-        :type third_operand: bool or None
+        :type third_operand: bool or Symbol or None
         """
         self.left_operand = left_operand  # Store first proposition
         self.right_operand = right_operand  # Store second proposition
@@ -95,9 +95,9 @@ class Implies:
         Initialize the IMPLIES operation with two propositions.
 
         :param antecedent: the "if" part of the implication
-        :type antecedent: bool
+        :type antecedent: bool or Symbol
         :param consequent: the "then" part of the implication
-        :type consequent: bool
+        :type consequent: bool or Symbol
         """
         self.antecedent = antecedent  # Store the "if" part
         self.consequent = consequent  # Store the "then" part
@@ -124,9 +124,9 @@ class Biconditional:
         Initialize the BICONDITIONAL operation with two propositions.
 
         :param left_operand: first propositional formula value
-        :type left_operand: bool
+        :type left_operand: bool or Symbol
         :param right_operand: second propositional formula value
-        :type right_operand: bool
+        :type right_operand: bool or Symbol
         """
         self.left_operand = left_operand  # Store first proposition
         self.right_operand = right_operand  # Store second proposition
@@ -153,9 +153,9 @@ class Xor:
         Initialize the XOR operation with two propositions.
 
         :param left_operand: first propositional formula value
-        :type left_operand: bool
+        :type left_operand: bool or Symbol
         :param right_operand: second propositional formula value
-        :type right_operand: bool
+        :type right_operand: bool or Symbol
         """
         self.left_operand = left_operand  # Store first proposition
         self.right_operand = right_operand  # Store second proposition

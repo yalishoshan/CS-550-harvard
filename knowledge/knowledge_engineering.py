@@ -1,5 +1,4 @@
 from propositional_logic import Or, Not, And
-from functools import reduce
 from inference import ModelCheck
 
 class Symbol:
@@ -45,7 +44,7 @@ class KnowledgeEngineering:
     This class implements the knowledge engineering process
     """
 
-    def __init__(self, people, rooms, weapons, knowledge=None):
+    def __init__(self, people, rooms, weapons):
         """
         Initialize the knowledge engineering process
         
@@ -67,20 +66,22 @@ class KnowledgeEngineering:
         self.knowledge.add(And(
             Or(self.people[0], self.people[1], self.people[2]),
             Or(self.rooms[0], self.rooms[1], self.rooms[2]),
-            Or(self.weapons[0], self.weapons[1], self.weapons[2])
-        ))
+            Or(self.weapons[0], self.weapons[1], (self.weapons[2])
+        )))
 
 
-    def initial_card(self, card):
+    def my_card(self, card, i):
         """
-        This function denies the card that is known
+        This function returns the card in my hand as not the solution because it is known
 
-        :param card: card in my h
+        :param card: card in my hand
         :type card: tuple
+        :param i: index of the card in the tuple
+        :type i: int
         """
 
         # Initial cards
-        self.knowledge.add(And(Not(Symbol(card[0])), Not(Symbol(card[1])), Not(Symbol(card[2]))))
+        self.knowledge.add(Not(Symbol(card[i])))
 
     def known_card(self, card):
         """
@@ -102,17 +103,21 @@ class KnowledgeEngineering:
         """
 
         # Unknown card
-        self.knowledge.add(Or(Not(Symbol(card[0]), Not(Symbol(card[1]), Not(Symbol(card[2]))))))
+        self.knowledge.add(Or(Not(Symbol(card[0])), Not(Symbol(card[1])), Not(Symbol(card[2]))))
 
 
 
+    def check_guess(self):
+        """"
+        This function checks the guess of the unknown card
 
-    def check_guess(knowledge, symbols):
-        for symbol in symbols:
-            if ModelCheck(knowledge, symbol):
+        """
+
+        for symbol in self.symbols:
+            if ModelCheck(self.knowledge, symbol):
                 return symbol
 
-            elif not ModelCheck(knowledge, Not(symbol)):
+            elif not ModelCheck(self.knowledge, Not(symbol)):
                 return "maybe"
 
 
