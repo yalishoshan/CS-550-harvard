@@ -1,46 +1,43 @@
-from
+from ..propositional_logic import Symbol, Not, And, Or, Implies
+from ..inference.model_checking import ModelChecker
 
-class Symbol:
-    """
-    Represents a propositional symbol (atomic proposition).
-    """
-
-    def __init__(self, name):
-        """
-        Initialize a propositional symbol.
-
-        :param name: the name of the symbol
-        :type name: str
-        """
-        self.name = name
-
-    def evaluate(self, model):
-        """
-        Evaluate the symbol using the given model.
-
-        :param model: dictionary mapping symbol names to truth values
-        :type model: dict
-        :return: truth value of this symbol in the model
-        :rtype: bool
-        """
-        if model is None or self.name not in model:
-            raise ValueError(f"Symbol '{self.name}' not found in model")
-        return model[self.name]
-
-    def __str__(self):
-        return self.name
-
-    def __eq__(self, other):
-        return isinstance(other, Symbol) and self.name == other.name
-
-    def __hash__(self):
-        return hash(self.name)
 
 class LogicPuzzle:
-    def __init__(self, people, houses):
+    def __init__(self, names, houses, knowledge_base, symbols):
+        self.names = names
+        self.houses = houses
+        self.knowledge_base = And()
+        self.symbols = []
 
+    def symbol_add:
+        for name in names:
+            for house in houses:
+                symbols.append(Symbol(f"{name}{house}"))
 
-        self.people = people
-        self.house = houses
+    def knowledge_add:
+        for name in names:
+            knowledge_base.add(Or(
+                Symbol(f"{name}Gryffindor"),
+                Symbol(f"{name}Hufflepuff"),
+                Symbol(f"{name}Ravenclaw"),
+                Symbol(f"{name}Slytherin")
+            ))
 
-    def knowledge_add(self):
+    def only_one_person:
+        for name in names:
+            for h1 in houses:
+                for h2 in houses:
+                    if h1 != h2:
+                        knowledge.base.add(Implies(Symbol(f"{name}{h1}"), Not(Symbol(f"{name}{h2}"))))
+
+    def only_one_house:
+        for house in houses:
+            for name1 in names:
+                for name2 in names:
+                    if name1 != name2:
+                        knowledge.base.add(Implies(Symbol(f"{name1}{house}"), Not(Symbol(f"{name2}{house}"))))
+
+    def check_knowledge:
+        for symbol in symbols:
+            if ModelChecker().check(knowledge_base, symbol):
+                print(f"{symbol} is True")
