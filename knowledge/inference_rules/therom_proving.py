@@ -1,5 +1,4 @@
 # Import all the inference rule modules
-from and_elimination import *              # Import AND elimination rule
 from biconditional_elimination import *    # Import biconditional elimination rule
 from de_morgans_law import *               # Import De Morgan's Law
 from implication_elimination import *      # Import implication elimination rule
@@ -65,16 +64,16 @@ class TheoremProving:  # Class that manages the proof process using inference ru
 
 def main():
 
-    A = Symbol("A")
-    B = Symbol("B")
-    implication = Implies(A, B)
+    a = Symbol("A")
+    b = Symbol("B")
+    implication = Implies(a, b)
 
-    start_kb = [A, implication]
-    goal = B
+    start_kb = [a, implication]
+    goal = b
 
 
     actions = [
-        ModusPones(A, implication),  # Assuming ModusPones accepts premises as input
+        ModusPones(a, implication),  # Assuming ModusPones accepts premises as input
     ]
 
     prover = TheoremProving(start_kb, actions, goal)

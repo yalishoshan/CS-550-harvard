@@ -1,36 +1,39 @@
-from ..propositional_logic import Symbol, Implies  # Import Symbol and Implies classes
+from ..propositional_logic import Symbol, Implies  # Import Symbol class and Implies class
+class ModusPones:
+    """A class to apply the Modus Pones inference rule."""
 
-class ModusPonens:
-    """A class to apply the Modus Ponens inference rule."""
-
-    def __init__(self, a, b):
+    def __init__(self, a, implication):
         """
-        Initialize ModusPonens with two symbols A and B.
+        Initialize ModusPones with symbol a and implication.
         """
 
         self.a = Symbol(a)  # Create Symbol object for premise A
-        self.b = Symbol(b)  # Create Symbol object for conclusion B
-
-    def apply(self, model):
+        self.implication = implication  # get the implication
+    def apply(self, kb):
         """
-        Apply the Modus Ponens rule on the given model.
+        Apply the Modus Pones rule on the given model.
 
-        :param model: A dictionary representing the truth values of symbols,
-        :type model: dict
-        :return: A string indicating whether B is necessarily true
-        :rtype: str
+        :param kb: A knowledge base
+        :type kb: list
+        :return: b
+        :rtype: list
 
         """
-        implication = Implies(self.a, self.b)  # Create implication A → B
-        if self.a.evaluate(model) and implication.evaluate(model):  # Check if A is true AND A → B is true
-            return f"{self.b} is True (by Modus Ponens)"  # If yes, conclude B is true
+        if self.a in kb:  # Check if A is true
+            if isinstance(self.implication, Implies) and self.implication.antecedent == self.a:  # Check if implication is true and A is antecedent
+                return [self.implication.consequent]  # Return B
 
-        else:
-            return f"Cannot conclude {self.b} is True"  # Otherwise, cannot conclude B is true
+        return []  # Otherwise, return an empty list
 
 def main():
-    mp = ModusPonens("A", "B")
-    model = {"A": True, "B": True}
-    print(mp.apply(model))
+    a = Symbol("A")
+    b = Symbol("B")
+    implication = Implies(a, b)
+
+
+    kb = [a, implication]
+
+    mp = ModusPones("A", implication)
+    print(mp.apply(kb))
 if __name__ == "__main__":
     main()
