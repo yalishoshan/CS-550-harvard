@@ -1,52 +1,59 @@
-from ..propositional_logic import Symbol, And, Or  # Import Symbol and And and Or classes
+from ..propositional_logic import Symbol, And, Or, Not  # Import Symbol and And and Or and Not classes
 
 
 class DeMorgansLaw:
     """Implements the De Morgan's Law inference rule."""
 
-    def __init__(self, a, b):
+    def __init__(self, symbol_name):
         """
-        Initialize DeMorgansLaw with two symbols 'a' and 'b'.
-        """
-        self.a = Symbol(a)  # Create Symbol object for 'a'
-        self.b = Symbol(b)  # Create Symbol object for 'b'
+        Initialize DeMorgansLaw with a symbol.
 
-    def apply(self, model):
-        """
-        Apply the De Morgan's Law rule on the given model.
-
-        :param model: A dictionary representing the truth values of symbols,
-        :type model: dict
-        :return: A string representing the result of applying the inference rule
-        :rtype: str
         """
 
-        if not (And(self.a, self.b)).evaluate(model):
-            return f"{self.a} is False OR {self.b} is False (by De Morgan's Law)"  # If true, conclude one of a or b is false
+        self.symbol_name = Symbol(symbol_name)  # Create Symbol
 
-        else:
-            return f"cant conclude {self.a} is false or {self.b} is false as a fact (by De Morgan's Law)"  # Otherwise, cannot conclude one of a or b is false
-
-    def reverse_apply(self, model):
+    def apply(self, kb):
         """
-        Apply the De Morgan's Law rule on the given model.
+        Apply the De Morgan's Law rule on the given kb.
 
-        :param model: A dictionary representing the truth values of symbols,
-        :type model: dict
-        :return: A string representing the result of applying the inference rule
-        :rtype: str
+        :param kb: knowledge base
+        :type kb: lst
+        :return: not A and  B
+        :rtype: lst
         """
 
-        if not (Or(self.a, self.b)).evaluate(model):
-            return f"{self.a}  And {self.b} is false (by De Morgan's Law)"  # If true, conclude a and b is false
+        for statement in kb: # Check if the statement is both not and and
+            if isinstance(statement, Not) and isinstance(statement.operand, And) and statement.operand.operand == self.symbol_name: # Check if the statement is both not and and
+                return [Or(Not(statement.operand.operands[0]), Not(statement.operand.operands[1]))] # Return not A and not B
 
-        else:
-            return f"cant conclude {self.a}  AND {self.b} is False (by De Morgan's Law)"  # Otherwise, cannot conclude a and b is false
+        return [] # else return an empty list
+
+
+
+
+    def reverse_apply(self, kb):
+        """
+        Apply the reverse of De Morgan's Law rule on the given kb.
+
+        :param kb: knowledge base
+        :type kb: lst
+        :return: not A or not B
+        :rtype: lst
+        """
+
+        for statement in kb:  # Check if the statement is both not and and
+            if isinstance(statement, Not) and isinstance(statement.operand,
+                                                       Or) and statement.operand.operand == self.symbol_name:  # Check if the statement is both not and and
+                return [Or(Not(statement.operand.operands[0]),
+                           Not(statement.operand.operands[1]))]  # Return not A and not B
+
+        return []  # else return an empty list
+
 
 def main():
-    inference = DeMorgansLaw("A", "B")
-    model = {"A": True, "B": True}
-    print(inference.apply(model))
+    dml = DeMorgansLaw("A")
+    kb = [Not(And(Symbol("A"), Symbol("B")))]
+    print(dml.apply(kb))
 
 if __name__ == "__main__":
     main()

@@ -11,7 +11,7 @@ class AndElimination:
 
     def apply(self, kb):
         """
-        Apply the And Elimination rule on the given model.
+        Apply the And Elimination rule on the given kb.
 
         :param kb: knowledge base
         :type kb: lst

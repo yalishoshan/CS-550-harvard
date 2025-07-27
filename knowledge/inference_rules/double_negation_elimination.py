@@ -3,31 +3,34 @@ from ..propositional_logic import Symbol, Not  # Import Symbol and Not classes
 class DoubleNegationElimination:
     """A class to apply the double negation elimination inference rule."""
 
-    def __init__(self, a, b):
+    def __init__(self, symbol_name):
         """
-        Initialize DoubleNegationElimination with two symbols A and B.
+        Initialize DoubleNegationElimination with symbol.
         """
-        self.a = Symbol(a)  # Create Symbol object for premise A
-        self.b = Symbol(b)  # Create Symbol object for conclusion B
+        self.symbol_name = Symbol(symbol_name)  # Create Symbol object
 
-    def apply(self, model):
+    def apply(self, kb):
         """
-        Apply the Double Negation Elimination rule on the given model.
+        Apply the Double Negation Elimination rule on the given kb.
 
-        :param model: A dictionary representing the truth values of symbols,
-        :type model: dict
-        :return: A dictionary representing the truth values of symbols after applying the rule,
-        :rtype: dict
+        :param kb: knowledge base
+        :type kb: lst
+        :return: a\
+        :rtype: lst
 
         """
 
-        if not Not(self.a).evaluate(model):  # Check if ¬A is false (i.e., A is true)
-            return f"{self.b} is True (by Double Negation Elimination)"  # Then B is true
+        for statement in kb: # Check if the statement is a double negation
+            if isinstance(statement, Not) and isinstance(statement.operand, Not) and statement.operand.operand == self.symbol_name: # Check if the statement is a double negation
+                return [self.symbol_name] # Return the symbol
+
+        return [] # else return an empty list
 
 def main():
-    dne = DoubleNegationElimination("A", "B")
-    model = {"A": True, "B": True}
-    print(dne.apply(model))
+    dne = DoubleNegationElimination("A")
+    a = Symbol("A")
+    kb = [Not(Not(a))]
+    print(f"Derived statements: { dne.apply(kb)}")
 
 if __name__ == "__main__":
     main()

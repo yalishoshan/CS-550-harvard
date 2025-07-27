@@ -1,38 +1,39 @@
-from ..propositional_logic import Symbol, Biconditional, And  # Import Symbol and biconditional classes
+from ..propositional_logic import Symbol, Biconditional, And, Implies  # Import Symbol and biconditional, implies classes
 
 
 class BiconditionalElimination:
     """Implements the Biconditional Elimination inference rule."""
 
-    def __init__(self, a, b):
+    def __init__(self, biconditional):
         """
-        Initialize BiconditionalElimination with two symbols 'a' and 'b'."""
-
-        self.a = Symbol(a)  # Create Symbol object for 'a'
-        self.b = Symbol(b)  # Create Symbol object for 'b'
-
-    def apply(self, model):
-        """
-        Apply the Biconditional Elimination rule on the given model.
-
-        :param model: A dictionary representing the truth values of symbols,
-        :type model: dict
-        :return: A string representing the result of applying the inference rule
-        :rtype: str
+        Initialize BiconditionalElimination with the given biconditional.
 
         """
+        self.biconditional = biconditional
 
-        if Biconditional(self.a, self.b).evaluate(model):  # Evaluate if (a ⇔ b) is true in the given model
-            return f"{self.a} implies {self.b} AND {self.b} implies {self.a} is True (by Biconditional Elimination)"  # If true, conclude a implies b AND b implies a is true
+    def apply(self, kb):
+        """
+        Apply the Biconditional Elimination rule on the given kb.
 
-        else:
-            return f"Cannot conclude {self.a} implies {self.b} AND {self.b} implies {self.a} is True"  # Otherwise, cannot conclude a is true
+        :param kb: knowledge base
+        :type kb: lst
+        :return: an implies b and b implies a
+        :rtype: lst
+
+        """
+
+        if self.biconditional in kb:  # Check if the biconditional is true
+            if isinstance(self.biconditional, Biconditional):  # Check if biconditional is true
+                return [And(Implies(self.biconditional.left, self.biconditional.right), Implies(self.biconditional.left, self.biconditional.right))]  # Return A implies B and B implies A
+
+        return []  # Otherwise, return an empty list
+
 
 
 def main():
-    inference = BiconditionalElimination("A", "B")
-    model = {"A": True, "B": True}
-    print(inference.apply(model))
+    be = BiconditionalElimination(Biconditional(Symbol("A"), Symbol("B")))
+    kb = [Biconditional(Symbol("A"), Symbol("B"))]
+    print(be.apply(kb))
 
 if __name__ == '__main__':
     main()
