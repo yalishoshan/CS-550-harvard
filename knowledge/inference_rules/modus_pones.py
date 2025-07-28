@@ -1,4 +1,5 @@
 from ..propositional_logic import Symbol, Implies  # Import Symbol class and Implies class
+
 class ModusPones:
     """A class to apply the Modus Pones inference rule."""
 
