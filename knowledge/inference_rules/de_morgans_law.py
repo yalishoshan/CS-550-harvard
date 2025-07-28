@@ -23,7 +23,7 @@ class DeMorgansLaw:
         """
 
         for statement in kb: # Check if the statement is both not and and
-            if isinstance(statement, Not) and isinstance(statement.operand, And) and statement.operand.operand == self.symbol_name: # Check if the statement is both not and and
+            if isinstance(statement, Not) and isinstance(statement.operand, And) and statement.operand.operands[0] == self.symbol_name: # Check if the statement is both not and and
                 return [Or(Not(statement.operand.operands[0]), Not(statement.operand.operands[1]))] # Return not A and not B
 
         return [] # else return an empty list
@@ -43,8 +43,8 @@ class DeMorgansLaw:
 
         for statement in kb:  # Check if the statement is both not and and
             if isinstance(statement, Not) and isinstance(statement.operand,
-                                                       Or) and statement.operand.operand == self.symbol_name:  # Check if the statement is both not and and
-                return [Or(Not(statement.operand.operands[0]),
+                                                       Or) and statement.operand.operands[0] == self.symbol_name:  # Check if the statement is both not and and
+                return [And(Not(statement.operand.operands[0]),
                            Not(statement.operand.operands[1]))]  # Return not A and not B
 
         return []  # else return an empty list
