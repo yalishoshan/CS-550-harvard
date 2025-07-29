@@ -1,4 +1,4 @@
-from ..propositional_logic import Symbol, Not, Or  # Import Symbol class, Not class and Or class
+from knowledge.propositional_logic import Symbol, Not, Or  # Import Symbol class, Not class and Or class
 
 
 class Resolution:
@@ -103,6 +103,33 @@ class Resolution:
                 return ["CONTRADICTION"]  # Return contradiction indicator
 
         return []  # Return empty list if resolution conditions not met
+
+    def engine(self, kb):
+        """
+        Runs iterative resolution using unit_resolution_alternative until
+        no more new clauses are derived or contradiction is found.
+
+        :param kb: knowledge base
+        :type kb: lst
+        :return: derived conclusion from resolving two clauses
+        :rtype: lst
+        """
+        derived_clauses = []
+        previous_kb = []
+
+        while True:
+            result = self.unit_resolution_alternative(kb)
+            if result == ["CONTRADICTION"]:
+                return "Contradiction found — entailment proven ✅"
+            if result and result not in kb and result not in derived_clauses:
+                kb.extend(result)
+                derived_clauses.extend(result)
+
+            if kb == previous_kb:
+                break  # No progress, resolution ends
+            previous_kb = kb[:]
+
+        return f"No contradiction found. Final KB: {kb}"
 
 
 def main():

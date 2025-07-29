@@ -43,7 +43,8 @@ class ConvToCNF:
                 converted_statements.extend(dml.apply([statement]))  # Apply and collect results
 
             elif isinstance(statement, Or):  # Handle A ∨ B
-                dp = DistributiveProperty(self.symbol_name, statement)  # Use stored symbol
+                dp = DistributiveProperty(self.symbol_name, statement
+                                          )  # Use stored symbol
                 converted_statements.extend(dp.apply([statement]))  # Apply and collect results
 
             else:  # Statement already in CNF form
