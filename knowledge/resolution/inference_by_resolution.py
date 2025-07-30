@@ -1,6 +1,6 @@
-from ..propositional_logic import Symbol, Not  # Import Symbol and Not classes
-from conversion_to_cnf import ConvToCNF
-from knowledge.inference_rules.resolution.resolution import Resolution
+from knowledge.propositional_logic import Symbol, Not  # Import Symbol and Not classes
+from knowledge.inference_rules.conversion_to_cnf import ConvToCNF
+from knowledge.resolution.resolution import Resolution
 class InferenceByResolution:
     def __init__(self, a):
         self.a = Symbol(a)  # Create Symbol object for premise a
@@ -29,7 +29,7 @@ class InferenceByResolution:
 
 
 def main():
-    kb = ["A", "B", "C"]
+    kb = [Symbol("A"), Symbol("B"), Symbol("C")]
     print(InferenceByResolution("A").apply(kb))
 
 if __name__ == "__main__":
