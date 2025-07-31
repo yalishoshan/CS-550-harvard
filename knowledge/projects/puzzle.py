@@ -35,7 +35,11 @@ Or(AKnight, AKnave),
     Or(BKnight, BKnave),
     Not(And(AKnight, AKnave)),
     Not(And(BKnight, BKnave)),
-    Implication(AKnight, Or(And(AKnight, BKnight)), And(AKnave, BKnave)),
+    Implication(AKnight, Or(And(AKnight, BKnight), And(AKnave, BKnave))),
+    Implication(AKnave, Not(Or(And(AKnight, BKnight), And(AKnave, BKnave)))),
+    Implication(BKnight, Or(And(AKnight, BKnave), And(AKnave, BKnight))),
+    Implication(BKnave, Not(Or(And(AKnight, BKnave), And(AKnave, BKnight))))
+)
 
 # Puzzle 3
 # A says either "I am a knight." or "I am a knave.", but you don't know which.
@@ -46,9 +50,12 @@ knowledge3 = And(
 Or(AKnight, AKnave),
     Or(BKnight, BKnave),
     Or(CKnight, CKnave),
-    Or(AKnave, AKnight),
-    Or(And(CKnave, BKnight), And(CKnight, BKnave)),
-    Or(And(AKnave, CKnight), And(CKnight, CKnave))
+    Implication(AKnight, Or(AKnight, AKnave)),
+    Implication(AKnave, Not(Or(AKnight, AKnave))),
+    Implication(BKnight, AKnave),
+    Implication(BKnave, Not(AKnave)),
+    Implication(CKnight, AKnight),
+    Implication(CKnave, Not(AKnight))
 )
 
 
