@@ -2,7 +2,7 @@ import itertools
 import random
 
 
-class Minesweeper():
+class Minesweeper:
     """
     Minesweeper game representation
     """
@@ -84,7 +84,7 @@ class Minesweeper():
         return self.mines_found == self.mines
 
 
-class Sentence():
+class Sentence:
     """
     Logical statement about a Minesweeper game
     A sentence consists of a set of board cells,
@@ -105,30 +105,44 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        raise NotImplementedError
+        known_mines = set()
+        if len(self.cells) == self.count and self.count != 0:
+            known_mines = self.cells
+
+
+        return known_mines
 
     def known_safes(self):
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        raise NotImplementedError
+        known_safes = set()
+        if self.count == 0:
+            known_safes = self.cells
+
+
+        return known_safes
 
     def mark_mine(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be a mine.
         """
-        raise NotImplementedError
+        if cell in self.cells:
+            self.cells.remove(cell)
+            self.count -= 1
+
 
     def mark_safe(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
-        raise NotImplementedError
+        if cell in self.cells:
+            self.cells.remove(cell)
 
 
-class MinesweeperAI():
+class MinesweeperAI:
     """
     Minesweeper game player
     """
@@ -182,7 +196,40 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        raise NotImplementedError
+        self.moves_made.add(cell)
+        self.mark_safe(cell)
+        new_sentence = Sentence([cell], count)
+        self.knowledge.append(new_sentence)
+
+        for sentence in self.knowledge:
+
+            if sentence.count == 0:
+                for cell in sentence.cells:
+                    self.mark_safe(cell)
+                    self.knowledge.remove(sentence)
+
+            elif sentence.count == len(sentence.cells):
+                for cell in sentence.cells:
+                    self.mark_mine(cell)
+                    self.knowledge.remove(sentence)
+
+
+        for s1 in self.knowledge:
+            for s2 in self.knowledge:
+                if s1 != s2 and s1.cells.issubset(s2.cells) :
+                    new_sentence = Sentence(s2.cells - s1.cells, s2.count - s1.count)
+                    self.knowledge.append(new_sentence)
+                    self.knowledge.remove(s1)
+                    self.knowledge.remove(s2)
+
+                elif s1 != s2 and s2.cells.issubset(s1.cells) :
+                    new_sentence = Sentence(s1.cells - s2.cells, s1.count - s2.count)
+                    self.knowledge.append(new_sentence)
+                    self.knowledge.remove(s1)
+                    self.knowledge.remove(s2)
+
+
+
 
     def make_safe_move(self):
         """
@@ -193,7 +240,12 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for i in range(self.height):
+            for j in range(self.width):
+                if (i,j) in self.safes and (i,j) not in self.moves_made:
+                    return i,j
+
+        return None
 
     def make_random_move(self):
         """
@@ -202,4 +254,11 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        for i in range(self.height):
+            for j in range(self.width):
+                if (i, j) not in self.moves_made and (i, j) not in self.mines:
+                    return i, j
+
+        return None
+
+
