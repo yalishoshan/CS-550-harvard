@@ -2,11 +2,8 @@
 
 ## Topics:
 - Propositional logic
+- Inference
+- Knowledge engineering
+- Inference rules
+- Resolution
 - First-order logic
-- Knowledge graphs
-- Expert systems
-
-## Coming Soon:
-- Logic implementations
-- Inference engines
-- Knowledge base examples
