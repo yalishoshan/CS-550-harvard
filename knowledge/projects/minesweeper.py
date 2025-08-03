@@ -198,35 +198,57 @@ class MinesweeperAI:
         """
         self.moves_made.add(cell)
         self.mark_safe(cell)
-        new_sentence = Sentence([cell], count)
+
+        cells_to_add = set()
+
+        for i in range(cell[0] -1 , cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+                if (i, j) != cell and 0 <= i < self.height and 0 <= j < self.width and (i, j) not in self.safes and (i, j) not in self.mines:
+                    cells_to_add.add((i, j))
+
+                elif (i, j) in self.mines:
+                    count -= 1
+
+        new_sentence = Sentence(cells_to_add, count)
         self.knowledge.append(new_sentence)
 
-        for sentence in self.knowledge:
+        changed = True
+        while changed:
+            changed = False
 
-            if sentence.count == 0:
-                for cell in sentence.cells:
+            for sentence in self.knowledge.copy():
+
+                mines = Sentence.known_mines(sentence)
+                safes = Sentence.known_safes(sentence)
+
+                for cell in safes:
                     self.mark_safe(cell)
-                    self.knowledge.remove(sentence)
+                    changed = True
 
-            elif sentence.count == len(sentence.cells):
-                for cell in sentence.cells:
+                for cell in mines:
                     self.mark_mine(cell)
+                    changed = True
+
+                if len(sentence.cells) == 0:
                     self.knowledge.remove(sentence)
+                    changed = True
 
+            for s1 in self.knowledge.copy():
+                for s2 in self.knowledge.copy():
 
-        for s1 in self.knowledge:
-            for s2 in self.knowledge:
-                if s1 != s2 and s1.cells.issubset(s2.cells) :
-                    new_sentence = Sentence(s2.cells - s1.cells, s2.count - s1.count)
-                    self.knowledge.append(new_sentence)
-                    self.knowledge.remove(s1)
-                    self.knowledge.remove(s2)
+                    if s1 != s2 and s1.cells.issubset(s2.cells):
+                        new_sentence = Sentence(s2.cells - s1.cells, s2.count - s1.count)
+                        self.knowledge.append(new_sentence)
+                        self.knowledge.remove(s1)
+                        self.knowledge.remove(s2)
+                        changed = True
 
-                elif s1 != s2 and s2.cells.issubset(s1.cells) :
-                    new_sentence = Sentence(s1.cells - s2.cells, s1.count - s2.count)
-                    self.knowledge.append(new_sentence)
-                    self.knowledge.remove(s1)
-                    self.knowledge.remove(s2)
+                    elif s1 != s2 and s2.cells.issubset(s1.cells):
+                        new_sentence = Sentence(s1.cells - s2.cells, s1.count - s2.count)
+                        self.knowledge.append(new_sentence)
+                        self.knowledge.remove(s1)
+                        self.knowledge.remove(s2)
+                        changed = True
 
 
 
@@ -254,11 +276,16 @@ class MinesweeperAI:
             1) have not already been chosen, and
             2) are not known to be mines
         """
+        valid_cells = []
         for i in range(self.height):
             for j in range(self.width):
-                if (i, j) not in self.moves_made and (i, j) not in self.mines:
-                    return i, j
+                if (i,j) not in self.moves_made and (i,j) not in self.mines:
+                    valid_cells.append((i,j))
 
-        return None
+        if  not valid_cells :
+            return None
+
+        return random.choice(valid_cells)
+
 
 
