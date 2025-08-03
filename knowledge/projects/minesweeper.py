@@ -107,7 +107,7 @@ class Sentence:
         """
         known_mines = set()
         if len(self.cells) == self.count and self.count != 0:
-            known_mines = self.cells
+            known_mines = self.cells.copy()
 
 
         return known_mines
@@ -118,7 +118,7 @@ class Sentence:
         """
         known_safes = set()
         if self.count == 0:
-            known_safes = self.cells
+            known_safes = self.cells.copy()
 
 
         return known_safes
@@ -233,22 +233,29 @@ class MinesweeperAI:
                     self.knowledge.remove(sentence)
                     changed = True
 
+            sentences_to_remove = []
+
             for s1 in self.knowledge.copy():
                 for s2 in self.knowledge.copy():
 
                     if s1 != s2 and s1.cells.issubset(s2.cells):
                         new_sentence = Sentence(s2.cells - s1.cells, s2.count - s1.count)
                         self.knowledge.append(new_sentence)
-                        self.knowledge.remove(s1)
-                        self.knowledge.remove(s2)
+                        sentences_to_remove.append(s1)
+                        sentences_to_remove.append(s2)
                         changed = True
 
                     elif s1 != s2 and s2.cells.issubset(s1.cells):
                         new_sentence = Sentence(s1.cells - s2.cells, s1.count - s2.count)
                         self.knowledge.append(new_sentence)
-                        self.knowledge.remove(s1)
-                        self.knowledge.remove(s2)
+                        sentences_to_remove.append(s1)
+                        sentences_to_remove.append(s2)
                         changed = True
+
+            for sentence in sentences_to_remove:
+                if sentence in self.knowledge:
+                    self.knowledge.remove(sentence)
+                    changed = True
 
 
 
