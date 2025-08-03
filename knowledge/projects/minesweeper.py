@@ -209,17 +209,24 @@ class MinesweeperAI:
                 elif (i, j) in self.mines:
                     count -= 1
 
+        if count < 0:
+            count = 0
+
         new_sentence = Sentence(cells_to_add, count)
         self.knowledge.append(new_sentence)
 
         changed = True
+
         while changed:
+
+
             changed = False
 
             for sentence in self.knowledge.copy():
 
                 mines = Sentence.known_mines(sentence)
                 safes = Sentence.known_safes(sentence)
+
 
                 for cell in safes:
                     self.mark_safe(cell)
@@ -232,30 +239,26 @@ class MinesweeperAI:
                 if len(sentence.cells) == 0:
                     self.knowledge.remove(sentence)
                     changed = True
-
             sentences_to_remove = []
-
             for s1 in self.knowledge.copy():
                 for s2 in self.knowledge.copy():
-
-                    if s1 != s2 and s1.cells.issubset(s2.cells):
+                    if s1 != s2 and s1.cells.issubset(s2.cells) and len(s1.cells) < len(s2.cells):
                         new_sentence = Sentence(s2.cells - s1.cells, s2.count - s1.count)
                         self.knowledge.append(new_sentence)
-                        sentences_to_remove.append(s1)
                         sentences_to_remove.append(s2)
                         changed = True
 
-                    elif s1 != s2 and s2.cells.issubset(s1.cells):
+                    elif s1 != s2 and s2.cells.issubset(s1.cells) and len(s2.cells) < len(s1.cells):
                         new_sentence = Sentence(s1.cells - s2.cells, s1.count - s2.count)
                         self.knowledge.append(new_sentence)
                         sentences_to_remove.append(s1)
-                        sentences_to_remove.append(s2)
                         changed = True
 
             for sentence in sentences_to_remove:
                 if sentence in self.knowledge:
                     self.knowledge.remove(sentence)
                     changed = True
+
 
 
 
@@ -295,4 +298,71 @@ class MinesweeperAI:
         return random.choice(valid_cells)
 
 
+def test_mine_inference():
+    print("=== Testing Mine Inference ===")
 
+    # Create a scenario that should identify (3,4) as a mine
+    ai = MinesweeperAI(6, 6)
+
+    print("\n--- Scenario: Force (3,4) to be identified as mine ---")
+
+    # Step 1: Create a sentence that includes (3,4)
+    # Click (3,3) with count 1 -> neighbors include (3,4)
+    ai.add_knowledge((3, 3), 1)
+    print(f"After (3,3): knowledge={[str(s) for s in ai.knowledge]}")
+
+    # Step 2: Mark neighbors as safe to eliminate them
+    # This should leave only (3,4) with count 1
+    neighbors_to_mark_safe = [(2, 2), (2, 3), (2, 4), (3, 2), (4, 2), (4, 3), (4, 4)]
+
+    for neighbor in neighbors_to_mark_safe:
+        if neighbor != (3, 4):  # Don't mark (3,4) as safe
+            ai.mark_safe(neighbor)
+            print(f"Marked {neighbor} as safe")
+            print(f"Current knowledge: {[str(s) for s in ai.knowledge]}")
+            print(f"Current mines: {ai.mines}")
+
+            if (3, 4) in ai.mines:
+                print(f"SUCCESS: (3,4) identified as mine!")
+                break
+
+    print(f"Final mines: {ai.mines}")
+    print(f"Is (3,4) in mines? {(3, 4) in ai.mines}")
+
+
+def test_cs50_style():
+    print("=== Testing CS50 Style (only add_knowledge calls) ===")
+
+    ai = MinesweeperAI(6, 6)
+
+    # Scenario: Multiple add_knowledge calls that should lead to mine inference
+    print("\n--- Multiple add_knowledge calls ---")
+
+    # Step 1: Click (3,3) with 1 mine nearby
+    ai.add_knowledge((3, 3), 1)
+    print(f"After (3,3): knowledge={[str(s) for s in ai.knowledge]}")
+    print(f"Mines: {ai.mines}")
+
+    # Step 2: Click neighbors and mark them as safe by giving them count 0
+    # This should eliminate possibilities and force (3,4) to be the mine
+
+    neighbors = [(2, 2), (2, 3), (2, 4), (3, 2), (4, 2), (4, 3), (4, 4)]
+
+    for neighbor in neighbors:
+        if neighbor != (3, 4):  # Don't click (3,4) since it might be a mine
+            print(f"\nClicking {neighbor} with count 0")
+            ai.add_knowledge(neighbor, 0)
+            print(f"After {neighbor}: knowledge={[str(s) for s in ai.knowledge]}")
+            print(f"Mines: {ai.mines}")
+
+            if (3, 4) in ai.mines:
+                print(f"SUCCESS: (3,4) identified as mine after clicking {neighbor}!")
+                break
+
+    print(f"\nFinal result:")
+    print(f"Mines: {ai.mines}")
+    print(f"Is (3,4) in mines? {(3, 4) in ai.mines}")
+
+
+if __name__ == "__main__":
+    test_cs50_style()
