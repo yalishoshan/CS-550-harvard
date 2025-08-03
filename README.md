@@ -12,12 +12,12 @@ Finding solutions to problems
 
 ### 2. [Knowledge](./knowledge/)
 Representing information and reasoning
--Propositional Logic
--Inference
-Knowledge engineering
--Inference Rules
--Resolution
--First Order Logic
+- Propositional Logic
+- Inference
+- Knowledge engineering
+- Inference Rules
+- Resolution
+- First Order Logic
 
 ### 3. [Uncertainty](./uncertainty/)
 Dealing with uncertain events using probability
