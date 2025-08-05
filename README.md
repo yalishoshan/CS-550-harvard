@@ -22,6 +22,18 @@ Representing information and reasoning
 ### 3. [Uncertainty](./uncertainty/)
 Dealing with uncertain events using probability
 
+- uncertainty
+- probability
+- conditional_probability
+- random_variables
+- bayes rule
+- joint probability
+- probability rules
+- bayesian_networks
+- sampling
+- markov_models
+- hidden_markov_modela
+
 ### 4. [Optimization](./optimization/)
 Finding not just correct, but better solutions
 
