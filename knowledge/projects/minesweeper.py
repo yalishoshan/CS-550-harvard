@@ -2,7 +2,7 @@ import itertools
 import random
 
 
-class Minesweeper():
+class Minesweeper:
     """
     Minesweeper game representation
     """
@@ -84,7 +84,7 @@ class Minesweeper():
         return self.mines_found == self.mines
 
 
-class Sentence():
+class Sentence:
     """
     Logical statement about a Minesweeper game
     A sentence consists of a set of board cells,
@@ -105,31 +105,44 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        miai=
-        return
+        known_mines = set()
+        if len(self.cells) == self.count and self.count != 0:
+            known_mines = self.cells.copy()
+
+
+        return known_mines
 
     def known_safes(self):
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        raise NotImplementedError
+        known_safes = set()
+        if self.count == 0:
+            known_safes = self.cells.copy()
+
+
+        return known_safes
 
     def mark_mine(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be a mine.
         """
-        raise NotImplementedError
+        if cell in self.cells:
+            self.cells.remove(cell)
+            self.count -= 1
+
 
     def mark_safe(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
-        raise NotImplementedError
+        if cell in self.cells:
+            self.cells.remove(cell)
 
 
-class MinesweeperAI():
+class MinesweeperAI:
     """
     Minesweeper game player
     """
@@ -183,7 +196,72 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        raise NotImplementedError
+        self.moves_made.add(cell)
+        self.mark_safe(cell)
+
+        cells_to_add = set()
+
+        for i in range(cell[0] -1 , cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+                if (i, j) != cell and 0 <= i < self.height and 0 <= j < self.width and (i, j) not in self.safes and (i, j) not in self.mines:
+                    cells_to_add.add((i, j))
+
+                elif (i, j) in self.mines:
+                    count -= 1
+
+        if count < 0:
+            count = 0
+
+        new_sentence = Sentence(cells_to_add, count)
+        self.knowledge.append(new_sentence)
+
+        changed = True
+
+        while changed:
+
+
+            changed = False
+
+            for sentence in self.knowledge.copy():
+
+                mines = Sentence.known_mines(sentence)
+                safes = Sentence.known_safes(sentence)
+
+
+                for cell in safes:
+                    self.mark_safe(cell)
+                    changed = True
+
+                for cell in mines:
+                    self.mark_mine(cell)
+                    changed = True
+
+                if len(sentence.cells) == 0:
+                    self.knowledge.remove(sentence)
+                    changed = True
+            sentences_to_remove = []
+            for s1 in self.knowledge.copy():
+                for s2 in self.knowledge.copy():
+                    if s1 != s2 and s1.cells.issubset(s2.cells) and len(s1.cells) < len(s2.cells):
+                        new_sentence = Sentence(s2.cells - s1.cells, s2.count - s1.count)
+                        self.knowledge.append(new_sentence)
+                        sentences_to_remove.append(s2)
+                        changed = True
+
+                    elif s1 != s2 and s2.cells.issubset(s1.cells) and len(s2.cells) < len(s1.cells):
+                        new_sentence = Sentence(s1.cells - s2.cells, s1.count - s2.count)
+                        self.knowledge.append(new_sentence)
+                        sentences_to_remove.append(s1)
+                        changed = True
+
+            for sentence in sentences_to_remove:
+                if sentence in self.knowledge:
+                    self.knowledge.remove(sentence)
+                    changed = True
+
+
+
+
 
     def make_safe_move(self):
         """
@@ -194,7 +272,12 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for i in range(self.height):
+            for j in range(self.width):
+                if (i,j) in self.safes and (i,j) not in self.moves_made:
+                    return i,j
+
+        return None
 
     def make_random_move(self):
         """
@@ -203,4 +286,83 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        valid_cells = []
+        for i in range(self.height):
+            for j in range(self.width):
+                if (i,j) not in self.moves_made and (i,j) not in self.mines:
+                    valid_cells.append((i,j))
+
+        if  not valid_cells :
+            return None
+
+        return random.choice(valid_cells)
+
+
+def test_mine_inference():
+    print("=== Testing Mine Inference ===")
+
+    # Create a scenario that should identify (3,4) as a mine
+    ai = MinesweeperAI(6, 6)
+
+    print("\n--- Scenario: Force (3,4) to be identified as mine ---")
+
+    # Step 1: Create a sentence that includes (3,4)
+    # Click (3,3) with count 1 -> neighbors include (3,4)
+    ai.add_knowledge((3, 3), 1)
+    print(f"After (3,3): knowledge={[str(s) for s in ai.knowledge]}")
+
+    # Step 2: Mark neighbors as safe to eliminate them
+    # This should leave only (3,4) with count 1
+    neighbors_to_mark_safe = [(2, 2), (2, 3), (2, 4), (3, 2), (4, 2), (4, 3), (4, 4)]
+
+    for neighbor in neighbors_to_mark_safe:
+        if neighbor != (3, 4):  # Don't mark (3,4) as safe
+            ai.mark_safe(neighbor)
+            print(f"Marked {neighbor} as safe")
+            print(f"Current knowledge: {[str(s) for s in ai.knowledge]}")
+            print(f"Current mines: {ai.mines}")
+
+            if (3, 4) in ai.mines:
+                print(f"SUCCESS: (3,4) identified as mine!")
+                break
+
+    print(f"Final mines: {ai.mines}")
+    print(f"Is (3,4) in mines? {(3, 4) in ai.mines}")
+
+
+def test_cs50_style():
+    print("=== Testing CS50 Style (only add_knowledge calls) ===")
+
+    ai = MinesweeperAI(6, 6)
+
+    # Scenario: Multiple add_knowledge calls that should lead to mine inference
+    print("\n--- Multiple add_knowledge calls ---")
+
+    # Step 1: Click (3,3) with 1 mine nearby
+    ai.add_knowledge((3, 3), 1)
+    print(f"After (3,3): knowledge={[str(s) for s in ai.knowledge]}")
+    print(f"Mines: {ai.mines}")
+
+    # Step 2: Click neighbors and mark them as safe by giving them count 0
+    # This should eliminate possibilities and force (3,4) to be the mine
+
+    neighbors = [(2, 2), (2, 3), (2, 4), (3, 2), (4, 2), (4, 3), (4, 4)]
+
+    for neighbor in neighbors:
+        if neighbor != (3, 4):  # Don't click (3,4) since it might be a mine
+            print(f"\nClicking {neighbor} with count 0")
+            ai.add_knowledge(neighbor, 0)
+            print(f"After {neighbor}: knowledge={[str(s) for s in ai.knowledge]}")
+            print(f"Mines: {ai.mines}")
+
+            if (3, 4) in ai.mines:
+                print(f"SUCCESS: (3,4) identified as mine after clicking {neighbor}!")
+                break
+
+    print(f"\nFinal result:")
+    print(f"Mines: {ai.mines}")
+    print(f"Is (3,4) in mines? {(3, 4) in ai.mines}")
+
+
+if __name__ == "__main__":
+    test_cs50_style()
