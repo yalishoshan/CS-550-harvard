@@ -32,6 +32,7 @@ class Probability:
             return p_a
 
 def main():
+    p = Probability()
 
 if __name__ = "__main__":
     main()

@@ -31,10 +31,14 @@ class Probability:
         p_not_c_given_not_r = joints["p(not c, not r)"] / self.not_r
 
         conditional_probs = {
-            "P(c|r)": p_c_given_r,
-            "P(not_c|r)": p_not_c_given_r,
-            "P(r|c)": p_c_given_not_r,
-            "P(not_r|c)": p_not_c_given_not_r
+            "P(c|r)": joints["p(c, r)"] / self.r,
+            "P(c|not_r)": joints["p(c, not r)"] / self.not_r,
+            "P(not_c|r)": joints["p(not c, r)"] / self.r,
+            "P(not_c|not_r)": joints["p(not c, not r)"] / self.not_r,
+            "P(r|c)": joints["p(c, r)"] / self.c,
+            "P(r|not_c)": joints["p(not c, r)"] / self.not_c,
+            "P(not_r|c)": joints["p(c, not r)"] / self.c,
+            "P(not_r|not_c)": joints["p(not c, not r)"] / self.not_c
         }
 
         return conditional_probs
