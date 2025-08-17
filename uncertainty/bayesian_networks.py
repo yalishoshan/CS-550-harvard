@@ -1,4 +1,6 @@
-class Probability:
+import itertools
+
+class BayesianNetwork:
     def __init__(self):
         self.probabilities = {}
 
@@ -31,10 +33,29 @@ class Probability:
 
         return results
 
+    def enumerate(self, x, e, y_vars, x_values, y_value_options):
+        all_combinations = list(itertools.product(*y_value_options))
+        results = {}
+
+        total_probability = 0.0
+
+        for x_value in x_values:
+            for combination in all_combinations:
+                scenario_result = self.inference(x_value, e, combination, x_values, combination)
+
+                probability_contribution = scenario_result[x_value]
+                total_probability += probability_contribution
+
+            results[x_value] = total_probability
+
+        return results
+
+
+
 
 def main():
     # Example usage:
-    network = Probability()
+    network = BayesianNetwork()
 
     # Set root node (Rain)
     rain_probs = {"none": 0.7, "light": 0.2, "heavy": 0.1}
